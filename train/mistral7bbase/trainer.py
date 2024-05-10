@@ -1,6 +1,6 @@
-# pip install torch transformers huggingface-hub accelerate trl pandas datasets peft bitsandbytes
-import pandas as pd
+# pip install torch transformers huggingface-hub accelerate trl pandas datasets peft bitsandbytes openpyxl
 import os
+import pandas as pd
 import datasets as ds
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
@@ -15,15 +15,15 @@ training_strategy = "DDP"  # "FSDP" o "DDP"
 is_quantized = True
 
 if training_strategy == "FSDP":
-    output_dir = "./ft-models/finetuned" + model_name.split("/")[-1] + "-adapters"
+    output_dir = "./ft-model/finetuned" + model_name.split("/")[-1] + "-adapters"
 else:
-    output_dir = "./ft-models/finetuned" + model_name.split("/")[-1]
+    output_dir = "./ft-model/finetuned" + model_name.split("/")[-1]
     
 
 
 # Cargamos el dataset
 def get_dataset():
-    filename = "./Drive/fine_tune_data.xlsx"
+    filename = "./data/data.xlsx"
     texts = []
     df = pd.read_excel(filename, sheet_name="data", usecols=["texts"])
 
