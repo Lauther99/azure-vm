@@ -1,8 +1,12 @@
-.ipynb_checkpoints
-.locks
-.vscode
+# Enviroments
 fine-tune-env
+venv
+# Models
 ft-models
 models--defog--sqlcoder-7b-2
 models--mistralai--Mistral-7B-v0.1
 models--unsloth--mistral-7b-bnb-4bit
+# Others
+.ipynb_checkpoints
+.locks
+.vscode

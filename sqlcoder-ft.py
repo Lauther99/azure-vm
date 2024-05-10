@@ -16,7 +16,7 @@ from trl import SFTTrainer
 
 
 # Ruta al archivo Excel en Google Drive
-filename = "./Drive/sql_coder_texts.xlsx"
+filename = "./data/sql_coder_texts.xlsx"
 
 # Search for the file
 texts = []
