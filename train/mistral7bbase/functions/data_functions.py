@@ -17,9 +17,13 @@ def read_data(sheet):
 
 
 def write_data(sheet_name, tuple: tuple):
+    """Parameters e.g.:
+sheet_name: "datasets"
+tuple: colum_letter, index,data"""
+
     current_dir = os.getcwd()
     # Construye la ruta al archivo Excel utilizando la ruta del notebook
-    excel_path = os.path.join(current_dir, "../../fine_tune_data.xlsx")
+    excel_path = os.path.join(current_dir, "../data/data.xlsx")
     column_letter, index, data = tuple
 
     try:
