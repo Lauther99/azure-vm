@@ -9,7 +9,7 @@ def read_data(sheet):
     current_dir = os.getcwd()
 
     # Construye la ruta al archivo Excel utilizando la ruta del notebook
-    excel_path = os.path.join(current_dir, "../../fine_tune_data.xlsx")
+    excel_path = os.path.join(current_dir, "../data/data.xlsx")
 
     # Lee el archivo Excel, selecciona la hoja "data" y las columnas necesarias
     dataframe = pd.read_excel(excel_path, sheet_name=sheet)
