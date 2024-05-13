@@ -25,7 +25,7 @@ else:
 def get_dataset():
     filename = "./data/data.xlsx"
     texts = []
-    df = pd.read_excel(filename, sheet_name="data", usecols=["texts"])
+    df = pd.read_excel(filename, sheet_name="data2", usecols=["texts"])
 
     for _, row in df.iterrows():
         texts.append(row["texts"])
