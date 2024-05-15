@@ -1,10 +1,9 @@
 import os
 import pandas as pd
 import openpyxl
-import pyperclip
 
 
-def read_data(sheet):
+def read_data(sheet, columns=None):
     # Obtiene la ruta del directorio actual del notebook
     current_dir = os.getcwd()
 
@@ -12,8 +11,29 @@ def read_data(sheet):
     excel_path = os.path.join(current_dir, "../data/data.xlsx")
 
     # Lee el archivo Excel, selecciona la hoja "data" y las columnas necesarias
-    dataframe = pd.read_excel(excel_path, sheet_name=sheet)
+    if columns is not None:
+        dataframe = pd.read_excel(excel_path, sheet_name=sheet, usecols=columns)
+    else:
+        dataframe = pd.read_excel(excel_path, sheet_name=sheet)
+
     return dataframe
+
+
+def get_column_letter(sheet_name, column_name):
+    current_dir = os.getcwd()
+    excel_path = os.path.join(current_dir, "../data/data.xlsx")
+
+    try:
+        df = pd.read_excel(excel_path, sheet_name=sheet_name)
+        columns = df.keys().to_list()
+        
+        column_index = columns.index(column_name) + 1
+        
+        column_letter = openpyxl.utils.get_column_letter(column_index)
+
+        return column_letter
+    except Exception as e:
+        print(f"Error al cargar el documento: {e}")
 
 
 def write_data(sheet_name, tuple: tuple):
@@ -41,12 +61,12 @@ tuple: colum_letter, index,data"""
 
 def get_gpt_relationships_prompt(texts: list[str]):
     """Prompt para chatgpt que busca las relaciones SQL de una consulta SQL.\nEn el prompt le decimos que va a enviarsele una lista de consultas SQL y que su salida debe ser las relaciones que encuentra por medio de los JOINS:
-    \nEjm:
-    SQL QUERY 5: SELECT Name FROM actor WHERE Age <> 20
-    Response: -- No JOIN relationships
-    SQL QUERY 6: SELECT T1.Title, T2.Publication_Date FROM book AS T1 JOIN publication AS T2 ON T1.Book_ID = T2.Book_ID
-    Response: -- book.Book_ID can be joined with publication.Book_ID
-    """
+\nEjm:
+SQL QUERY 5: SELECT Name FROM actor WHERE Age <> 20
+Response: -- No JOIN relationships
+SQL QUERY 6: SELECT T1.Title, T2.Publication_Date FROM book AS T1 JOIN publication AS T2 ON T1.Book_ID = T2.Book_ID
+Response: -- book.Book_ID can be joined with publication.Book_ID
+"""
 
     prompt = """You will be given a list of SQL QUERYS
 Your task is to find JOIN relationships in each SQL QUERY.
@@ -69,6 +89,7 @@ YOUR FINAL ANSWER MUST BE A COMMA SEPARATED LIST OF THE ANSWERS OF EACH SQL QUER
         prompt += n.format(index + 1) + answer
 
     return prompt
+
 
 def get_gpt_comments_prompt(texts: list[str]):
     """Prompt para chatgpt que busca las relaciones SQL de una consulta SQL.\nEn el prompt le decimos que va a enviarsele una lista de consultas SQL y que su salida debe ser las relaciones que encuentra por medio de los JOINS:

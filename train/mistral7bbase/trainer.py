@@ -10,14 +10,19 @@ from trl import SFTTrainer
 
 # Run with accelerate launch mistral7b-ft.py
 
-model_name = "mistralai/Mistral-7B-v0.1"
+mistral_instruct = "mistralai/Mistral-7B-Instruct-v0.2"
+llama3_base = "meta-llama/Meta-Llama-3-8B"
+
+model_name = mistral_instruct
+
 training_strategy = "DDP"  # "FSDP" o "DDP"
 is_quantized = True
+torch_type = torch.bfloat16
 
 if training_strategy == "FSDP":
     output_dir = "./ft-model/finetuned" + model_name.split("/")[-1] + "-adapters"
 else:
-    output_dir = "./ft-model/finetuned" + model_name.split("/")[-1]
+    output_dir = ("./ft-model/finetuned" + model_name.split("/")[-1] + "-" + str(torch_type).split("torch.")[-1] if is_quantized else "fp32")
     
 
 
@@ -37,24 +42,23 @@ def get_dataset():
 # Cargamos el modelo
 def get_model_and_tokenizer(model_name):
     if is_quantized:
+        print("Cargando el modelo en: " + str(torch_type).split("torch.")[-1])
         model = AutoModelForCausalLM.from_pretrained(
             model_name,
             trust_remote_code=True,
             cache_dir="",
             use_cache=False,
-            quantization_config=BitsAndBytesConfig(
-                load_in_4bit=True,
-                bnb_4bit_quant_type="nf4",
-                bnb_4bit_compute_dtype="float16",
-                bnb_4bit_use_double_quant=False,
-            ),
+            torch_dtype=torch_type,
+            low_cpu_mem_usage=True,
         )
     else:
+        print("Cargando el modelo en: fp32")
         model = AutoModelForCausalLM.from_pretrained(
             model_name,
             trust_remote_code=True,
             cache_dir="",
             use_cache=False,
+            low_cpu_mem_usage=True,
         )
 
     tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -99,28 +103,28 @@ def train(model, tokenizer, dataset, output_dir):
         train_dataset=dataset,  # Set the training dataset.
         peft_config=peft_config,  # Set the PEFT configuration.
         dataset_text_field="texts",  # Set the name of the text field in the dataset.
-        max_seq_length=None,  # Cuando es None, el max_seq_len vendrá determinado por la secuencia más larga de un lote
+        max_seq_length=3000,  # Cuando es None, el max_seq_len vendrá determinado por la secuencia más larga de un lote
         args=training_args,  # Set the training arguments.
         packing=False,  # Disable packing.
         # max_seq_length=1024 # Set the maximum sequence length.
     )
 
     trainer.model.print_trainable_parameters()
-    if getattr(trainer.accelerator.state, "fsdp_plugin", None):
-        from peft.utils.other import fsdp_auto_wrap_policy
+    # if getattr(trainer.accelerator.state, "fsdp_plugin", None):
+    #     from peft.utils.other import fsdp_auto_wrap_policy
 
-        fsdp_plugin = trainer.accelerator.state.fsdp_plugin
-        fsdp_plugin.auto_wrap_policy = fsdp_auto_wrap_policy(trainer.model)
+    #     fsdp_plugin = trainer.accelerator.state.fsdp_plugin
+    #     fsdp_plugin.auto_wrap_policy = fsdp_auto_wrap_policy(trainer.model)
 
     trainer.train()
 
-    if hasattr(trainer, "is_fsdp_enabled") and trainer.is_fsdp_enabled():
-        trainer.accelerator.state.fsdp_plugin.set_state_dict_type("FULL_STATE_DICT")
-        trainer.accelerator.print(
-            f"\nAdapters with Model and tokenizer will be saved to {output_dir}"
-        )
-    else:
-        print(f"\nModel and tokenizer will be saved to {output_dir}")
+    # if hasattr(trainer, "is_fsdp_enabled") and trainer.is_fsdp_enabled():
+    #     trainer.accelerator.state.fsdp_plugin.set_state_dict_type("FULL_STATE_DICT")
+    #     trainer.accelerator.print(
+    #         f"\nAdapters with Model and tokenizer will be saved to {output_dir}"
+    #     )
+    # else:
+    #     print(f"\nModel and tokenizer will be saved to {output_dir}")
 
     print("=" * 10 + "=>" + "Guardando el modelo")
     trainer.save_model(output_dir)
