@@ -7,7 +7,9 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from peft import LoraConfig
 from transformers import TrainingArguments
 from trl import SFTTrainer
+from huggingface_hub import login
 
+login(token="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")
 # Run with accelerate launch mistral7b-ft.py
 
 mistral_instruct = "mistralai/Mistral-7B-Instruct-v0.2"
@@ -30,10 +32,11 @@ else:
 # Cargamos el dataset
 def get_dataset(model_name):
     row_name = model_name.split("/")[-1] + "-texts"
-    filename = "./data/data.xlsx"
+    current_dir = os.path.dirname(__file__)
     
+    excel_path = os.path.join(current_dir, "./data/data.xlsx")
     texts = []
-    df = pd.read_excel(filename, sheet_name="train")
+    df = pd.read_excel(excel_path, sheet_name="train")
 
     for _, row in df.iterrows():
         texts.append(row[row_name])
@@ -88,7 +91,7 @@ def train(model, tokenizer, dataset, output_dir):
         learning_rate=2e-4,  # Set the learning rate.
         lr_scheduler_type="cosine",  # Set the learning rate scheduler type.
         logging_steps=10,  # Set the logging steps.
-        num_train_epochs=30, # Set the number of training epochs.
+        num_train_epochs=50, # Set the number of training epochs.
         # max_steps=381,  # Set the maximum number of training steps.
         fp16=not torch.cuda.is_bf16_supported(),  # Enable fp16 training.
         bf16=torch.cuda.is_bf16_supported(),

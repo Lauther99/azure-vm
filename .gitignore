@@ -6,6 +6,7 @@ ft-models
 models--defog--sqlcoder-7b-2
 models--mistralai--Mistral-7B-v0.1
 models--unsloth--mistral-7b-bnb-4bit
+models--meta-llama--Meta-Llama-3-8B-Instruct
 # Others
 .ipynb_checkpoints
 .locks
