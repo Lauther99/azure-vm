@@ -10,3 +10,6 @@ models--unsloth--mistral-7b-bnb-4bit
 .ipynb_checkpoints
 .locks
 .vscode
+
+train/mistral7bbase/functions/__pycache__
+train/mistral7bbase/notebooks/__pycache__
