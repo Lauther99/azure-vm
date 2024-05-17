@@ -88,20 +88,20 @@ def train(model, tokenizer, dataset, output_dir):
 
     training_args = TrainingArguments(
         output_dir=output_dir,  # Set the output directory for the training run.
-        per_device_train_batch_size=16,  # Set the per-device training batch size.
-        gradient_accumulation_steps=2,  # Set the number of gradient accumulation steps.
+        per_device_train_batch_size=64,  # Set the per-device training batch size.
+        # gradient_accumulation_steps=2,  # Set the number of gradient accumulation steps.
         optim="paged_adamw_32bit",  # Set the optimizer to use.
-        learning_rate=2e-4,  # Set the learning rate.
+        learning_rate=35e-5,  # Set the learning rate.
         lr_scheduler_type="cosine",  # Set the learning rate scheduler type.
         logging_steps=10,  # Set the logging steps.
-        num_train_epochs=50, # Set the number of training epochs.
+        num_train_epochs=100, # Set the number of training epochs.
         # max_steps=381,  # Set the maximum number of training steps.
         fp16=not torch.cuda.is_bf16_supported(),  # Enable fp16 training.
         bf16=torch.cuda.is_bf16_supported(),
         warmup_ratio=0.03,  # Proporción de pasos para un calentamiento lineal (de 0 a tasa de aprendizaje)
         gradient_checkpointing=True,
         gradient_checkpointing_kwargs={"use_reentrant": True},
-        group_by_length=True,  # Ahorra memoria y acelera considerablemente el entrenamiento
+        # group_by_length=True,  # Ahorra memoria y acelera considerablemente el entrenamiento
         save_strategy="steps",  # Set the save strategy.
         save_steps=25,  # Guardar punto de control cada X pasos de actualización
     )
