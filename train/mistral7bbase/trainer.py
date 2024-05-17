@@ -35,10 +35,13 @@ def get_dataset(model_name):
     current_dir = os.path.dirname(__file__)
     
     excel_path = os.path.join(current_dir, "./data/data.xlsx")
-    texts = []
     df = pd.read_excel(excel_path, sheet_name="train")
-
-    for _, row in df.iterrows():
+    
+    df_shuffled = df.sample(frac=1, random_state=42)
+    
+    texts = []
+    
+    for _, row in df_shuffled.iterrows():
         texts.append(row[row_name])
 
     texts_df = pd.DataFrame(texts, columns=["texts"])
@@ -85,7 +88,7 @@ def train(model, tokenizer, dataset, output_dir):
 
     training_args = TrainingArguments(
         output_dir=output_dir,  # Set the output directory for the training run.
-        per_device_train_batch_size=8,  # Set the per-device training batch size.
+        per_device_train_batch_size=16,  # Set the per-device training batch size.
         gradient_accumulation_steps=2,  # Set the number of gradient accumulation steps.
         optim="paged_adamw_32bit",  # Set the optimizer to use.
         learning_rate=2e-4,  # Set the learning rate.
