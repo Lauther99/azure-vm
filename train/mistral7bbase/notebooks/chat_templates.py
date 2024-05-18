@@ -68,7 +68,8 @@ The query will run on a database with the following schema:
 
 {relations}
 
-Given the database schema, write correct SQL QUERY for the question/request: '{question}'<|eot_id|>
+Given the database schema, write correct SQL QUERY for the question/request: '{question}'<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+[SQL]
 """
 
 def get_chat_template(model_name):
