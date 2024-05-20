@@ -79,7 +79,7 @@ def get_model_and_tokenizer(model_name):
 # SFT Configuracion.
 def train(model, tokenizer, dataset, output_dir):
     peft_config = LoraConfig(
-        r=8,  # Set the rank of the LoRA projection matrix.
+        r=16,  # Set the rank of the LoRA projection matrix.
         lora_alpha=16,  # Set the alpha parameter for the LoRA projection matrix.
         lora_dropout=0.05,  # Set the dropout rate for the LoRA projection matrix.
         bias="none",  # Set the bias term to "none".
@@ -88,13 +88,13 @@ def train(model, tokenizer, dataset, output_dir):
 
     training_args = TrainingArguments(
         output_dir=output_dir,  # Set the output directory for the training run.
-        per_device_train_batch_size=20,  # Set the per-device training batch size.
+        per_device_train_batch_size=10,  # Set the per-device training batch size.
         # gradient_accumulation_steps=2,  # Set the number of gradient accumulation steps.
         optim="paged_adamw_32bit",  # Set the optimizer to use.
         learning_rate=2e-4,  # Set the learning rate.
         lr_scheduler_type="cosine",  # Set the learning rate scheduler type.
-        logging_steps=10,  # Set the logging steps.
-        num_train_epochs=70, # Set the number of training epochs.
+        logging_steps=20,  # Set the logging steps.
+        num_train_epochs=30, # Set the number of training epochs.
         # max_steps=381,  # Set the maximum number of training steps.
         fp16=not torch.cuda.is_bf16_supported(),  # Enable fp16 training.
         bf16=torch.cuda.is_bf16_supported(),
@@ -103,7 +103,7 @@ def train(model, tokenizer, dataset, output_dir):
         gradient_checkpointing_kwargs={"use_reentrant": True},
         group_by_length=True,  # Ahorra memoria y acelera considerablemente el entrenamiento
         save_strategy="steps",  # Set the save strategy.
-        save_steps=30,  # Guardar punto de control cada X pasos de actualización
+        save_steps=100,  # Guardar punto de control cada X pasos de actualización
     )
 
     trainer = SFTTrainer(
@@ -112,7 +112,7 @@ def train(model, tokenizer, dataset, output_dir):
         train_dataset=dataset,  # Set the training dataset.
         peft_config=peft_config,  # Set the PEFT configuration.
         dataset_text_field="texts",  # Set the name of the text field in the dataset.
-        max_seq_length=2609,  # Cuando es None, el max_seq_len vendrá determinado por la secuencia más larga de un lote
+        max_seq_length=3000,  # Cuando es None, el max_seq_len vendrá determinado por la secuencia más larga de un lote
         args=training_args,  # Set the training arguments.
         packing=False,  # Disable packing.
         # max_seq_length=1024 # Set the maximum sequence length.
