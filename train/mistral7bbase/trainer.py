@@ -112,7 +112,7 @@ def train(model, tokenizer, dataset, output_dir):
         train_dataset=dataset,  # Set the training dataset.
         peft_config=peft_config,  # Set the PEFT configuration.
         dataset_text_field="texts",  # Set the name of the text field in the dataset.
-        max_seq_length=3000,  # Cuando es None, el max_seq_len vendrá determinado por la secuencia más larga de un lote
+        max_seq_length=2609,  # Cuando es None, el max_seq_len vendrá determinado por la secuencia más larga de un lote
         args=training_args,  # Set the training arguments.
         packing=False,  # Disable packing.
         # max_seq_length=1024 # Set the maximum sequence length.

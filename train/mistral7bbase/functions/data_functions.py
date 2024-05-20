@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import openpyxl
+import json
 
 
 def read_data(sheet, columns=None):
@@ -35,7 +36,15 @@ def get_column_letter(sheet_name, column_name):
     except Exception as e:
         print(f"Error al cargar el documento: {e}")
 
-
+def get_examples_text(cadena):
+    arreglo = json.loads(cadena)
+    nueva_cadena = ""
+    for item in arreglo:
+        q = item["question"]
+        a = item["answer"]
+        nueva_cadena += f"Question: {q}\nAnswer: {a}\n\n"
+    return nueva_cadena
+    
 def write_data(sheet_name, tuple: tuple):
     """Parameters e.g.:
 sheet_name: "datasets"

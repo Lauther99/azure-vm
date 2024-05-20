@@ -19,40 +19,50 @@ Given the database schema, here is the question: '''{question}'''[/INST]
 """
 
 # llama38binstruct_train_template="""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
-
-# Your task is to Generate a SQL SERVER code to the user question. 
-# Do not add any explanation, only SQL code.<|eot_id|><|start_header_id|>user<|end_header_id|>
+# Your are a very helpfull assistant<|eot_id|><|start_header_id|>user<|end_header_id|>
+# Your task is to Generate SQL SERVER 2014 QUERY to the user question. 
+# Do not add any other explanation, only SQL code.
+# Do not hallucinate or infer new information in the SQL
 # The query will run on a database with the following schema:
 # {context}
 
 # {relations}
 
-# ### Question
-# Given the database schema, here is the question: '''{question}'''<|eot_id|><|start_header_id|>assistant<|end_header_id|>
-# {answer}<|eot_id|>
+# Given the database schema, write correct SQL QUERY for the question/request: '{question}'<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+# [SQL]{answer}[/SQL]<|eot_id|>
 # """
 
 # llama38binstruct_test_template="""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
-
-# Your task is to Generate a SQL SERVER code to the user question. Do not add any explanation, only SQL code.<|eot_id|><|start_header_id|>user<|end_header_id|>
+# Your are a very helpfull assistant<|eot_id|><|start_header_id|>user<|end_header_id|>
+# Your task is to Generate SQL SERVER 2014 QUERY to the user question. 
+# Do not add any other explanation, only SQL code.
+# Do not hallucinate or infer new information in the SQL
 # The query will run on a database with the following schema:
 # {context}
 
 # {relations}
 
-# ### Question
-# Given the database schema, here is the question: '''{question}'''<|eot_id|>
+# Given the database schema, write correct SQL QUERY for the question/request: '{question}'<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+# [SQL]
 # """
 
 llama38binstruct_train_template="""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
 Your are a very helpfull assistant<|eot_id|><|start_header_id|>user<|end_header_id|>
 Your task is to Generate SQL SERVER 2014 QUERY to the user question. 
 Do not add any other explanation, only SQL code.
-Do not hallucinate or infer new information in the SQL
+Do not hallucinate or infer new information in the SQL query.
+
+Use the following past examples only as a reference. Use them to guide you, this are only to guide your answer.
+EXAMPLES
+{examples}
+END OF EXAMPLES
+
 The query will run on a database with the following schema:
+SCHEMA
 {context}
 
 {relations}
+END OF SCHEMA
 
 Given the database schema, write correct SQL QUERY for the question/request: '{question}'<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 [SQL]{answer}[/SQL]<|eot_id|>
@@ -63,10 +73,18 @@ Your are a very helpfull assistant<|eot_id|><|start_header_id|>user<|end_header_
 Your task is to Generate SQL SERVER 2014 QUERY to the user question. 
 Do not add any other explanation, only SQL code.
 Do not hallucinate or infer new information in the SQL
+Use the following past examples only as a reference. Use them to guide you, this are only to guide your answer.
+EXAMPLES
+{examples}
+END OF EXAMPLES
+
 The query will run on a database with the following schema:
+SCHEMA
 {context}
 
 {relations}
+END OF SCHEMA
+
 
 Given the database schema, write correct SQL QUERY for the question/request: '{question}'<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 [SQL]
